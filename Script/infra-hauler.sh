@@ -49,13 +49,13 @@ exitstatus=$?
 if [ $exitstatus = 0 ]; then
     case "$OPTION" in
         1)
-            sh /usr/bin/MTD/iptraf.sh
+            sh /usr/bin/MTD/aws.sh
             ;;
         2)
-            sh /usr/bin/MTD/bmon.sh
+            sh /usr/bin/MTD/DO.sh
             ;;
         3)
-            sh /usr/bin/MTD/iftop.sh
+            sh /usr/bin/MTD/RKE2.sh
             ;;
         4)
             echo "DS cluster"
