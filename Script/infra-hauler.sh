@@ -1,47 +1,39 @@
 #!/bin/bash
 
-# Function to handle whiptail installation with a progress bar
-install_whiptail() {
-    {
-        echo "XXX"; echo "10"; echo "Detecting OS..."; echo "XXX"
-        OS_TYPE=$(uname)
-        sleep 1
+# Function to handle installation using standard terminal output
+# because we can't use whiptail to install whiptail!
+install_dependencies() {
+    if command -v whiptail >/dev/null 2>&1; then
+        return 0
+    fi
 
-        if [ "$OS_TYPE" = "Darwin" ]; then
-            echo "XXX"; echo "40"; echo "Updating Homebrew..."; echo "XXX"
-            # Redirecting all output to /dev/null to keep it clean
-            brew update > /dev/null 2>&1
-            echo "XXX"; echo "70"; echo "Installing whiptail (newt)..."; echo "XXX"
-            brew install newt > /dev/null 2>&1
-        elif [ "$OS_TYPE" = "Linux" ]; then
-            echo "XXX"; echo "40"; echo "Updating package lists..."; echo "XXX"
-            if [ -f /etc/debian_version ]; then
-                sudo apt update -y > /dev/null 2>&1
-                echo "XXX"; echo "80"; echo "Installing whiptail..."; echo "XXX"
-                sudo apt install -y whiptail > /dev/null 2>&1
-            elif [ -f /etc/os-release ]; then
-                source /etc/os-release
-                if [[ "$ID" == "opensuse"* || "$ID" == "sles" ]]; then
-                    sudo zypper install -y newt > /dev/null 2>&1
-                elif [[ "$ID" == "fedora" || "$ID" == "rhel" ]]; then
-                    sudo dnf install -y newt > /dev/null 2>&1
-                fi
+    echo "Whiptail not found. Starting installation..."
+    OS_TYPE=$(uname)
+
+    if [ "$OS_TYPE" = "Darwin" ]; then
+        brew install newt
+    elif [ "$OS_TYPE" = "Linux" ]; then
+        if [ -f /etc/debian_version ]; then
+            sudo apt update -y && sudo apt install -y whiptail
+        elif [ -f /etc/os-release ]; then
+            source /etc/os-release
+            if [[ "$ID" == "opensuse"* || "$ID" == "sles" ]]; then
+                sudo zypper install -y newt
+            elif [[ "$ID" == "fedora" || "$ID" == "rhel" || "$ID" == "centos" ]]; then
+                sudo dnf install -y newt
             fi
         fi
-        echo "XXX"; echo "100"; echo "Preparation complete!"; echo "XXX"
-        sleep 1
-    } | whiptail --title "System Setup" --gauge "Ensuring whiptail is installed..." 6 60 0
+    fi
 }
 
-# Run the installation check first
-install_whiptail
+# 1. Ensure whiptail exists first
+install_dependencies
 
-# --- Main Script ---
-# You can now modify these options freely.
-OPTION=$(whiptail --title "[INFRA-HAULER] Any cloud,Rancher labs in minutes" --menu "Choose your option" 15 60 4 \
+# 2. Now that we know it exists, we can use it for the UI
+OPTION=$(whiptail --title "[INFRA-HAULER] Any cloud, Rancher labs in minutes" --menu "Choose your option" 15 60 5 \
 "1" "Rancher Local cluster on AWS" \
-"2" "Rancher Local cluster on Digitial-Ocean" \
-"3" "Downstream RKE2 cluster Digitial-Ocean" \
+"2" "Rancher Local cluster on Digital-Ocean" \
+"3" "Downstream RKE2 cluster Digital-Ocean" \
 "4" "Downstream RKE2 cluster on AWS" \
 "5" "Exit" 3>&1 1>&2 2>&3)
 
@@ -52,7 +44,7 @@ if [ $exitstatus = 0 ]; then
             sh /usr/bin/MTD/aws.sh
             ;;
         2)
-            sh /usr/bin/MTD/DO.sh
+            sh digital_ocean.sh
             ;;
         3)
             sh /usr/bin/MTD/RKE2.sh
@@ -68,3 +60,4 @@ if [ $exitstatus = 0 ]; then
 else
     echo "User cancelled."
     exit 1
+fi 
