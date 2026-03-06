@@ -26,17 +26,15 @@ clear
 echo "=================================================="
 echo "      🏗️  INFRA-HAULER: Rancher Lab Automator     "
 echo "=================================================="
-echo -e "Choose a deployment option:\n"
+echo -e "Choose an action:\n"
 
 options=(
     "Rancher Local cluster on AWS"
     "Rancher Local cluster on Digital-Ocean"
     "Downstream RKE2 cluster Digital-Ocean"
-    "Downstream RKE2 cluster on AWS"
+    "🔥 DESTROY an existing Lab"
     "Exit"
 )
-
-PS3=$'\n'"Select a number (1-${#options[@]}): "
 
 select opt in "${options[@]}"
 do
@@ -47,8 +45,9 @@ do
         "Rancher Local cluster on Digital-Ocean")
             bash "$SCRIPT_DIR/digital_ocean.sh" "$REPO_NAME"
             break ;;
-        "Downstream RKE2 cluster Digital-Ocean")
-            bash "$SCRIPT_DIR/RKE2.sh" "$REPO_NAME"
+        "🔥 DESTROY an existing Lab")
+            # Call the destroy logic
+            bash "$SCRIPT_DIR/destroy.sh" "$REPO_NAME"
             break ;;
         "Exit")
             exit 0 ;;
