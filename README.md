@@ -63,6 +63,21 @@ Get the latest version of `infra-hauler` for your operating system. No Go or Bas
 | **Downstream RKE2** | AWS | Scalable RKE2 clusters deployed into your existing VPC. |
 
 ---
+##📂 Directory Structure
+```
+.
+├── .github/workflows/
+│   └── release.yml      # GitHub Actions automation for CI/CD
+├── releases/            # Latest cross-platform binaries
+├── Script/              # Core Bash automation modules
+│   ├── aws.sh           # AWS-specific logic
+│   ├── digital_ocean.sh # DigitalOcean-specific logic
+│   ├── RKE2.sh          # RKE2 deployment logic
+│   └── infra-hauler.sh  # Main interactive TUI entry point
+├── go.mod               # Go module definition
+├── main.go              # Go wrapper logic (embeds the Script directory)
+└── README.md            # Project documentation
+```
 
 ## 📦 Version Archive
 
