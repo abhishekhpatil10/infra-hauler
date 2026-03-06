@@ -1,0 +1,65 @@
+name: Build and Release Binaries
+
+on:
+  push:
+    tags:
+      - 'v*' # This triggers the build when you push a tag like v1.0.0
+
+jobs:
+  build:
+    name: Build Binary
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+            output: infra-hauler-linux
+          - goos: darwin
+            goarch: arm64
+            output: infra-hauler-macos-m1
+          - goos: darwin
+            goarch: amd64
+            output: infra-hauler-macos-intel
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Build Binary
+        run: |
+          # This pulls the tag name (e.g., v1.0.0) and injects it into your main.go Version variable
+          VERSION=${GITHUB_REF_NAME}
+          GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} \
+          go build -ldflags="-X 'main.Version=$VERSION'" -o ${{ matrix.output }} main.go
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.output }}
+          path: ${{ matrix.output }}
+
+  release:
+    name: Create GitHub Release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Important: Allows GitHub to create the release
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            infra-hauler-linux/infra-hauler-linux
+            infra-hauler-macos-m1/infra-hauler-macos-m1
+            infra-hauler-macos-intel/infra-hauler-macos-intel
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
