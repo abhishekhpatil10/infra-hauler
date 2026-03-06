@@ -1,0 +1,13 @@
+# Ignore the Go binary build outputs
+infra-hauler-*
+releases/
+
+# Ignore the Rancher template library (we clone this dynamically)
+tf-rancher-up/
+
+# Ignore local Terraform state and secrets
+*.tfstate
+*.tfstate.backup
+.terraform/
+terraform.tfvars
+*.exe
