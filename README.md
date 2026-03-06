@@ -38,20 +38,18 @@ Get the latest version of `infra-hauler` for your operating system. No Go or Bas
 2. ** Run the tool:**
    ```bash
    ./infra-hauler-linux
-   
+
 3. ** (Optional) Move to your PATH:**
   ```bash
   sudo mv infra-hauler-linux /usr/local/bin/infra-hauler
   infra-hauler
-
-
-### 🌟 Key Features
+## 🌟 Key Features
 
 * **Interactive UI:** Uses an intuitive terminal-based menu (Whiptail) for a seamless, guided user experience.
 * **Multi-Cloud Support:** Provision clusters on **AWS** and **DigitalOcean** with unified commands.
 * **Zero Script Management:** All Bash logic is embedded inside the compiled Go binary—no more managing a folder of loose `.sh` files.
-* **Smart Dependencies:** Automatically detects your OS (Ubuntu/Debian, RHEL/Fedora, openSUSE, or macOS) and installs required system tools like `whiptail` if they are missing.
-* **Clean Execution:** Scripts are extracted to a secure temporary directory during runtime and wiped immediately after execution to keep your system clean.
+* **Smart Dependencies:** Automatically detects your OS (Ubuntu/Debian, RHEL/Fedora, openSUSE, or macOS) and installs required system tools if they are missing.
+* **Clean Execution:** Scripts are extracted to a secure temporary directory during runtime and wiped immediately after execution.
 
 ---
 
@@ -74,6 +72,16 @@ Need a specific older version? You can find all historical binaries, source code
 
 ---
 
+## 📂 The repository structure
+
+``` 
+.
+├── Scripts/                 # Main directory to modules
+│   ├── digital_ocean.sh     # Module to deploy a Rancher upstream cluster on Digital Ocean.
+│   ├── infra-hauler.sh      # Main script that provides TUI for user to select an environment to deploy
+└── README.md                # Project documentation
+```
+
 ## 🤝 Contributing
 
 We welcome contributions to expand the cloud ecosystem! To add a new provider (like GCP or Azure) or a new cluster type:
@@ -83,8 +91,8 @@ We welcome contributions to expand the cloud ecosystem! To add a new provider (l
 3. Ensure your script uses the `$SCRIPT_DIR` variable to locate sibling scripts.
 4. Update the main menu in `Script/infra-hauler.sh` to include your new option.
 5. Submit a **Pull Request** for review.
-
 ---
+
 
 *Maintained by [Abhishek Patil](https://github.com/abhishekhpatil10)*
 
@@ -106,15 +114,3 @@ We welcome contributions to expand the cloud ecosystem! To add a new provider (l
 
 
 
-
-
-
-## 📂 The repository structure
-
-``` 
-.
-├── Scripts/                 # Main directory to modules
-│   ├── digital_ocean.sh     # Module to deploy a Rancher upstream cluster on Digital Ocean.
-│   ├── infra-hauler.sh      # Main script that provides TUI for user to select an environment to deploy
-└── README.md                # Project documentation
-```
