@@ -39,11 +39,14 @@ Get the latest version of `infra-hauler` for your operating system. No Go or Bas
    ```bash
    ./infra-hauler-linux
 
-3. ** (Optional) Move to your PATH:**
+3. **(Optional) Move to your PATH: **
   ```bash
   sudo mv infra-hauler-linux /usr/local/bin/infra-hauler
   infra-hauler
-## 🌟 Key Features
+
+
+
+### 🌟 Key Features
 
 * **Interactive UI:** Uses an intuitive terminal-based menu (Whiptail) for a seamless, guided user experience.
 * **Multi-Cloud Support:** Provision clusters on **AWS** and **DigitalOcean** with unified commands.
@@ -53,7 +56,7 @@ Get the latest version of `infra-hauler` for your operating system. No Go or Bas
 
 ---
 
-## 🛠️ Supported Deployments
+### 🛠️ Supported Deployments
 
 | Deployment Type | Cloud Provider | Description |
 | :--- | :--- | :--- |
@@ -64,7 +67,7 @@ Get the latest version of `infra-hauler` for your operating system. No Go or Bas
 
 ---
 
-## 📦 Version Archive
+### 📦 Version Archive
 
 Need a specific older version? You can find all historical binaries, source code snapshots, and detailed changelogs in our official repository archive:
 
@@ -72,7 +75,7 @@ Need a specific older version? You can find all historical binaries, source code
 
 ---
 
-## 📂 The repository structure
+### 📂 The repository structure
 
 ``` 
 .
@@ -82,7 +85,7 @@ Need a specific older version? You can find all historical binaries, source code
 └── README.md                # Project documentation
 ```
 
-## 🤝 Contributing
+### 🤝 Contributing
 
 We welcome contributions to expand the cloud ecosystem! To add a new provider (like GCP or Azure) or a new cluster type:
 
