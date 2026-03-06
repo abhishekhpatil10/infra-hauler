@@ -1,6 +1,6 @@
 #!/bin/bash
 
-TF_VARS="terraform.tfvars"
+TF_VARS="$(pwd)/terraform.tfvars"
 
 # --- Functions for UI (Native CLI) ---
 # These replace the whiptail versions with standard terminal prompts
