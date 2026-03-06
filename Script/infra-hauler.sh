@@ -1,7 +1,8 @@
 #!/bin/bash
 
-# Function to handle installation using standard terminal output
-# because we can't use whiptail to install whiptail!
+# --- NEW: Locate where the scripts are unpacked ---
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
 install_dependencies() {
     if command -v whiptail >/dev/null 2>&1; then
         return 0
@@ -26,10 +27,8 @@ install_dependencies() {
     fi
 }
 
-# 1. Ensure whiptail exists first
 install_dependencies
 
-# 2. Now that we know it exists, we can use it for the UI
 OPTION=$(whiptail --title "[INFRA-HAULER] Any cloud, Rancher labs in minutes" --menu "Choose your option" 15 60 5 \
 "1" "Rancher Local cluster on AWS" \
 "2" "Rancher Local cluster on Digital-Ocean" \
@@ -41,13 +40,16 @@ exitstatus=$?
 if [ $exitstatus = 0 ]; then
     case "$OPTION" in
         1)
-            sh /usr/bin/MTD/aws.sh
+            # Use SCRIPT_DIR to find aws.sh next to this script
+            bash "$SCRIPT_DIR/aws.sh"
             ;;
         2)
-            sh digital_ocean.sh
+            # Use SCRIPT_DIR to find digital_ocean.sh next to this script
+            bash "$SCRIPT_DIR/digital_ocean.sh"
             ;;
         3)
-            sh /usr/bin/MTD/RKE2.sh
+            # Use SCRIPT_DIR to find RKE2.sh next to this script
+            bash "$SCRIPT_DIR/RKE2.sh"
             ;;
         4)
             echo "DS cluster"
@@ -60,4 +62,4 @@ if [ $exitstatus = 0 ]; then
 else
     echo "User cancelled."
     exit 1
-fi 
+fi
