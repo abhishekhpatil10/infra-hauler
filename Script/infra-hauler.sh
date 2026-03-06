@@ -1,65 +1,60 @@
 #!/bin/bash
 
-# --- NEW: Locate where the scripts are unpacked ---
+# Get the directory where this script is located
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-install_dependencies() {
-    if command -v whiptail >/dev/null 2>&1; then
-        return 0
-    fi
+# Define colors for a professional look
+BLUE='\033[0;34m'
+GREEN='\033[0;32m'
+BOLD='\033[1m'
+NC='\033[0m' # No Color
 
-    echo "Whiptail not found. Starting installation..."
-    OS_TYPE=$(uname)
+clear
+echo -e "${BLUE}${BOLD}==================================================${NC}"
+echo -e "${GREEN}${BOLD}      🏗️  INFRA-HAULER: Rancher Lab Automator      ${NC}"
+echo -e "${BLUE}${BOLD}==================================================${NC}"
+echo -e "Choose a deployment option:\n"
 
-    if [ "$OS_TYPE" = "Darwin" ]; then
-        brew install newt
-    elif [ "$OS_TYPE" = "Linux" ]; then
-        if [ -f /etc/debian_version ]; then
-            sudo apt update -y && sudo apt install -y whiptail
-        elif [ -f /etc/os-release ]; then
-            source /etc/os-release
-            if [[ "$ID" == "opensuse"* || "$ID" == "sles" ]]; then
-                sudo zypper install -y newt
-            elif [[ "$ID" == "fedora" || "$ID" == "rhel" || "$ID" == "centos" ]]; then
-                sudo dnf install -y newt
-            fi
-        fi
-    fi
-}
+options=(
+    "Rancher Local cluster on AWS"
+    "Rancher Local cluster on Digital-Ocean"
+    "Downstream RKE2 cluster Digital-Ocean"
+    "Downstream RKE2 cluster on AWS"
+    "Exit"
+)
 
-install_dependencies
+# PS3 is the prompt used by the 'select' command
+PS3=$'\n'"Select a number (1-${#options[@]}): "
 
-OPTION=$(whiptail --title "[INFRA-HAULER] Any cloud, Rancher labs in minutes" --menu "Choose your option" 15 60 5 \
-"1" "Rancher Local cluster on AWS" \
-"2" "Rancher Local cluster on Digital-Ocean" \
-"3" "Downstream RKE2 cluster Digital-Ocean" \
-"4" "Downstream RKE2 cluster on AWS" \
-"5" "Exit" 3>&1 1>&2 2>&3)
-
-exitstatus=$?
-if [ $exitstatus = 0 ]; then
-    case "$OPTION" in
-        1)
-            # Use SCRIPT_DIR to find aws.sh next to this script
+select opt in "${options[@]}"
+do
+    case $opt in
+        "Rancher Local cluster on AWS")
+            echo -e "\n🚀 Starting AWS Deployment..."
             bash "$SCRIPT_DIR/aws.sh"
+            break
             ;;
-        2)
-            # Use SCRIPT_DIR to find digital_ocean.sh next to this script
+        "Rancher Local cluster on Digital-Ocean")
+            echo -e "\n🚀 Starting DigitalOcean Deployment..."
             bash "$SCRIPT_DIR/digital_ocean.sh"
+            break
             ;;
-        3)
-            # Use SCRIPT_DIR to find RKE2.sh next to this script
+        "Downstream RKE2 cluster Digital-Ocean")
+            echo -e "\n🚀 Starting RKE2 DigitalOcean Deployment..."
             bash "$SCRIPT_DIR/RKE2.sh"
+            break
             ;;
-        4)
-            echo "DS cluster"
+        "Downstream RKE2 cluster on AWS")
+            echo -e "\n🚀 Starting RKE2 AWS Deployment..."
+            echo "Coming soon!"
+            break
             ;;
-        5)
-            echo "Exiting..."
+        "Exit")
+            echo -e "\n👋 Exiting. Happy hauling!"
             exit 0
             ;;
+        *) 
+            echo -e "\n❌ Invalid option $REPLY. Please pick a number from the list."
+            ;;
     esac
-else
-    echo "User cancelled."
-    exit 1
-fi
+done
