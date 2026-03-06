@@ -63,7 +63,7 @@ Get the latest version of `infra-hauler` for your operating system. No Go or Bas
 | **Downstream RKE2** | AWS | Scalable RKE2 clusters deployed into your existing VPC. |
 
 ---
-##📂 Directory Structure
+## 📂 Directory Structure
 ```
 .
 ├── .github/workflows/
