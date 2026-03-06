@@ -3,7 +3,7 @@ name: Build and Release Binaries
 on:
   push:
     tags:
-      - 'v*' # Triggers when you push a tag like v1.0.0
+      - 'v*' # Triggers when you push a tag like v1.1.6
 
 jobs:
   build:
@@ -33,7 +33,6 @@ jobs:
 
       - name: Build Binary
         run: |
-          # Inject the Git Tag into the Go Version variable
           VERSION=${GITHUB_REF_NAME}
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} \
           go build -ldflags="-X 'main.Version=$VERSION'" -o ${{ matrix.output }} main.go
@@ -49,41 +48,23 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Needed to push to repo and create release
+      contents: write # Needed to create the release and upload assets
     steps:
-      - name: Checkout main branch
+      - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: main # Switch from Tag to Main branch so we can push
-          fetch-depth: 0
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
-
-      - name: Commit Binaries to Repository Folder
-        run: |
-          mkdir -p releases
-          
-          # Copy binaries from artifact folders to the releases folder
-          cp -f infra-hauler-linux/infra-hauler-linux releases/
-          cp -f infra-hauler-macos-m1/infra-hauler-macos-m1 releases/
-          cp -f infra-hauler-macos-intel/infra-hauler-macos-intel releases/
-          
-          # Configure Git Bot
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
-          # Add and push back to the repository
-          git add releases/
-          git commit -m "chore: update binaries for ${{ github.ref_name }} [skip ci]" || echo "No changes to commit"
-          git push origin main
+        with:
+          path: ./artifacts
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            releases/infra-hauler-linux
-            releases/infra-hauler-macos-m1
-            releases/infra-hauler-macos-intel
+            ./artifacts/infra-hauler-linux/infra-hauler-linux
+            ./artifacts/infra-hauler-macos-m1/infra-hauler-macos-m1
+            ./artifacts/infra-hauler-macos-intel/infra-hauler-macos-intel
+          generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
