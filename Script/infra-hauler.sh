@@ -1,18 +1,31 @@
 #!/bin/bash
 
-# Get the directory where this script is located
+# Setup Paths
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_URL="https://github.com/rancher/tf-rancher-up"
+REPO_NAME="tf-rancher-up"
 
-# Define colors for a professional look
-BLUE='\033[0;34m'
-GREEN='\033[0;32m'
-BOLD='\033[1m'
-NC='\033[0m' # No Color
+# 1. Pre-flight Check: Ensure Git is installed
+if ! command -v git &> /dev/null; then
+    echo "❌ Error: 'git' is not installed. Please install git to continue."
+    exit 1
+fi
 
+# 2. Setup the Rancher Template Library
+echo -e "\n📦 Initializing Rancher Template Library..."
+if [ -d "$REPO_NAME" ]; then
+    echo "🔄 Library exists. Updating to latest version..."
+    (cd "$REPO_NAME" && git pull) &> /dev/null
+else
+    echo "📥 Cloning Rancher templates..."
+    git clone "$REPO_URL" &> /dev/null
+fi
+
+# 3. Main Menu
 clear
-echo -e "${BLUE}${BOLD}==================================================${NC}"
-echo -e "${GREEN}${BOLD}      🏗️  INFRA-HAULER: Rancher Lab Automator      ${NC}"
-echo -e "${BLUE}${BOLD}==================================================${NC}"
+echo "=================================================="
+echo "      🏗️  INFRA-HAULER: Rancher Lab Automator     "
+echo "=================================================="
 echo -e "Choose a deployment option:\n"
 
 options=(
@@ -23,38 +36,23 @@ options=(
     "Exit"
 )
 
-# PS3 is the prompt used by the 'select' command
 PS3=$'\n'"Select a number (1-${#options[@]}): "
 
 select opt in "${options[@]}"
 do
     case $opt in
         "Rancher Local cluster on AWS")
-            echo -e "\n🚀 Starting AWS Deployment..."
-            bash "$SCRIPT_DIR/aws.sh"
-            break
-            ;;
+            bash "$SCRIPT_DIR/aws.sh" "$REPO_NAME"
+            break ;;
         "Rancher Local cluster on Digital-Ocean")
-            echo -e "\n🚀 Starting DigitalOcean Deployment..."
-            bash "$SCRIPT_DIR/digital_ocean.sh"
-            break
-            ;;
+            bash "$SCRIPT_DIR/digital_ocean.sh" "$REPO_NAME"
+            break ;;
         "Downstream RKE2 cluster Digital-Ocean")
-            echo -e "\n🚀 Starting RKE2 DigitalOcean Deployment..."
-            bash "$SCRIPT_DIR/RKE2.sh"
-            break
-            ;;
-        "Downstream RKE2 cluster on AWS")
-            echo -e "\n🚀 Starting RKE2 AWS Deployment..."
-            echo "Coming soon!"
-            break
-            ;;
+            bash "$SCRIPT_DIR/RKE2.sh" "$REPO_NAME"
+            break ;;
         "Exit")
-            echo -e "\n👋 Exiting. Happy hauling!"
-            exit 0
-            ;;
+            exit 0 ;;
         *) 
-            echo -e "\n❌ Invalid option $REPLY. Please pick a number from the list."
-            ;;
+            echo "Invalid option $REPLY" ;;
     esac
 done
