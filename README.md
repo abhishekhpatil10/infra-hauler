@@ -43,4 +43,41 @@ Get the latest version of `infra-hauler` for your operating system. No Go or Bas
    sudo mv infra-hauler-linux /usr/local/bin/infra-hauler
    infra-hauler
 
+## 🌟 Key Features
 
+* **Interactive UI:** Uses an intuitive terminal-based menu (Whiptail) for a seamless, guided user experience.
+* **Multi-Cloud Support:** Provision clusters on **AWS** and **DigitalOcean** with unified commands.
+* **Zero Script Management:** All Bash logic is embedded inside the compiled Go binary—no more managing a folder of loose `.sh` files.
+* **Smart Dependencies:** Automatically detects your OS (Ubuntu/Debian, RHEL/Fedora, openSUSE, or macOS) and installs required system tools if they are missing.
+* **Clean Execution:** Scripts are extracted to a secure temporary directory during runtime and wiped immediately after execution.
+
+---
+
+## 🛠️ Supported Deployments
+
+| Deployment Type | Cloud Provider | Description |
+| :--- | :--- | :--- |
+| **Rancher Local** | AWS | Spin up a Rancher management server on a single EC2 instance. |
+| **Rancher Local** | DigitalOcean | Fast provisioning of a Rancher management server on a Droplet. |
+| **Downstream RKE2** | DigitalOcean | Deploy a production-ready RKE2 downstream cluster. |
+| **Downstream RKE2** | AWS | Scalable RKE2 clusters deployed into your existing VPC. |
+
+---
+
+## 📦 Version Archive
+
+Need a specific older version? You can find all historical binaries, source code snapshots, and detailed changelogs in our official repository archive:
+
+👉 [**View All Previous Releases**](https://github.com/abhishekhpatil10/infra-hauler/releases)
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions to expand the cloud ecosystem! To add a new provider (like GCP or Azure) or a new cluster type:
+
+1. **Fork** the repository and create your feature branch.
+2. Add your new `.sh` script to the `Script/` folder.
+3. Ensure your script uses the `$SCRIPT_DIR` variable to locate sibling scripts.
+4. Update the main menu in `Script/infra-hauler.sh` to include your new option.
+5. Submit a **Pull Request** for review.
