@@ -39,12 +39,11 @@ Get the latest version of `infra-hauler` for your operating system. No Go or Bas
    ```bash
    ./infra-hauler-linux
    
-3. **(Optional) Move to your PATH:**
+3. ** (Optional) Move to your PATH:**
   ```bash
   sudo mv infra-hauler-linux /usr/local/bin/infra-hauler
   infra-hauler
 
----
 
 ## 🌟 Key Features
 
