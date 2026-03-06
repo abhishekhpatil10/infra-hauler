@@ -1,9 +1,8 @@
 name: Build and Release Binaries
-
 on:
   push:
     tags:
-      - 'v*' # This triggers the build when you push a tag like v1.0.0
+      - 'v*'
 
 jobs:
   build:
@@ -21,23 +20,18 @@ jobs:
           - goos: darwin
             goarch: amd64
             output: infra-hauler-macos-intel
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
           go-version: '1.21'
-
       - name: Build Binary
         run: |
-          # This pulls the tag name (e.g., v1.0.0) and injects it into your main.go Version variable
           VERSION=${GITHUB_REF_NAME}
           GOOS=${{ matrix.goos }} GOARCH=${{ matrix.goarch }} \
           go build -ldflags="-X 'main.Version=$VERSION'" -o ${{ matrix.output }} main.go
-
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -49,10 +43,30 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
-      contents: write # Important: Allows GitHub to create the release
+      contents: write
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4 # Need this to push files back to repo
+
       - name: Download all artifacts
         uses: actions/download-artifact@v4
+
+      # --- NEW SECTION STARTS HERE ---
+      - name: Commit Binaries to Repository Folder
+        run: |
+          mkdir -p releases
+          # Copy binaries from their artifact folders into the 'releases' directory
+          cp infra-hauler-linux/infra-hauler-linux releases/
+          cp infra-hauler-macos-m1/infra-hauler-macos-m1 releases/
+          cp infra-hauler-macos-intel/infra-hauler-macos-intel releases/
+          
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          git add releases/
+          git commit -m "chore: update binaries for ${{ github.ref_name }}" || echo "No changes to commit"
+          git push origin main
+      # --- NEW SECTION ENDS HERE ---
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
