@@ -61,9 +61,45 @@ read -r CONFIRM
 
 if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
     cd "$TARGET_DIR" || exit
-    echo "🛠️ Initializing Terraform..."
-    terraform init
-    terraform apply -auto-approve
+    
+    echo -e "\n🛠️  Initializing Terraform... (This may take a minute)"
+    terraform init -input=false > /tmp/tf_init.log 2>&1
+    
+    if [ $? -ne 0 ]; then
+        echo "❌ Terraform Init Failed! Check /tmp/tf_init.log"
+        exit 1
+    fi
+
+    echo -e "🏗️  Deploying Rancher Lab on DigitalOcean..."
+    echo -e "⏳ This usually takes 5-8 minutes. Please wait.\n"
+
+    # Start Terraform in the background and hide output
+    terraform apply -auto-approve > terraform_deploy.log 2>&1 &
+    TF_PID=$!
+
+    # Simple Loading Animation
+    spinner=( "⠋" "⠙" "⠹" "⠸" "⠼" "⠴" "⠦" "⠧" "⠇" "⠏" )
+    while kill -0 $TF_PID 2>/dev/null; do
+        for i in "${spinner[@]}"; do
+            echo -ne "\r  $i Working... (Tail logs in another terminal: tail -f $TARGET_DIR/terraform_deploy.log)"
+            sleep 0.1
+        done
+    done
+
+    # Check if it finished successfully
+    wait $TF_PID
+    if [ $? -eq 0 ]; then
+        echo -e "\r✨ SUCCESS! Your Rancher Lab is ready."
+        echo "--------------------------------------------------"
+        # Extract the Rancher URL from the state/output if available
+        terraform output
+        echo "--------------------------------------------------"
+    else
+        echo -e "\r❌ DEPLOYMENT FAILED!"
+        echo "Check the detailed log here: $TARGET_DIR/terraform_deploy.log"
+        exit 1
+    fi
+
 else
     echo -e "\n💡 To apply manually later, run:"
     echo -e "cd $TARGET_DIR && terraform init && terraform apply"
