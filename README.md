@@ -81,3 +81,6 @@ We welcome contributions to expand the cloud ecosystem! To add a new provider (l
 3. Ensure your script uses the `$SCRIPT_DIR` variable to locate sibling scripts.
 4. Update the main menu in `Script/infra-hauler.sh` to include your new option.
 5. Submit a **Pull Request** for review.
+---
+
+*Maintained by [Abhishek Patil](https://github.com/abhishekhpatil10)*
